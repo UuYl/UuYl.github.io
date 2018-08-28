@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.4.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.png?v=6.4.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.png?v=6.4.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.png?v=6.4.0">
+
+
+  <link rel="mask-icon" href="/images/avatar.png?v=6.4.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.4.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="基础知识 Numpy的主要对象是齐次多维的数组（array）。在Numpy中维度（dimension）被称为轴（axes），轴的数目称为阶（rank）。 Numpy中数组类是ndarray，它与array不完全相同，ndarray可以处理多维数据，它还有很多重要的属性： ndarray.ndim 数组的轴的数目。 ndarray.shape 数组的维度。用一个元组（tuple）表示每个维度的大小。">
+<meta name="keywords" content="numpy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Numpy学习笔记">
+<meta property="og:url" content="http://yoursite.com/2018/08/25/numpy-tutorial/index.html">
+<meta property="og:site_name" content="UuYl&#39;s homepage">
+<meta property="og:description" content="基础知识 Numpy的主要对象是齐次多维的数组（array）。在Numpy中维度（dimension）被称为轴（axes），轴的数目称为阶（rank）。 Numpy中数组类是ndarray，它与array不完全相同，ndarray可以处理多维数据，它还有很多重要的属性： ndarray.ndim 数组的轴的数目。 ndarray.shape 数组的维度。用一个元组（tuple）表示每个维度的大小。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-08-25T09:50:18.813Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Numpy学习笔记">
+<meta name="twitter:description" content="基础知识 Numpy的主要对象是齐次多维的数组（array）。在Numpy中维度（dimension）被称为轴（axes），轴的数目称为阶（rank）。 Numpy中数组类是ndarray，它与array不完全相同，ndarray可以处理多维数据，它还有很多重要的属性： ndarray.ndim 数组的轴的数目。 ndarray.shape 数组的维度。用一个元组（tuple）表示每个维度的大小。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/08/25/numpy-tutorial/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Numpy学习笔记 | UuYl's homepage</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">UuYl's homepage</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">To live is to change the world</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签<span class="badge">5</span></a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类<span class="badge">5</span></a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档<span class="badge">7</span></a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/25/numpy-tutorial/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="uniuvel">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="UuYl's homepage">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Numpy学习笔记
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-08-25 17:50:18" itemprop="dateCreated datePublished" datetime="2018-08-25T17:50:18+08:00">2018-08-25</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/numpy/" itemprop="url" rel="index"><span itemprop="name">numpy</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><hr>
+<p>Numpy的主要对象是齐次多维的数组（array）。在Numpy中维度（dimension）被称为轴（axes），轴的数目称为阶（rank）。</p>
+<p>Numpy中数组类是ndarray，它与array不完全相同，ndarray可以处理多维数据，它还有很多重要的属性：</p>
+<p><strong>ndarray.ndim</strong></p>
+<p>数组的轴的数目。</p>
+<p><strong>ndarray.shape</strong></p>
+<p>数组的维度。用一个元组（tuple）表示每个维度的大小。</p>
+<p><strong>ndarray.size</strong></p>
+<p>数组的所有元素的个数。</p>
+<p><strong>ndarray.dtype</strong></p>
+<p>数组元素的类型，有numpy.int32、numpy.int16、numpy.float64等等。</p>
+<p><strong>ndarray.itemsize</strong></p>
+<p>数组中每个元素的字节数。</p>
+<p><strong>ndarray.data</strong></p>
+<p>一个存储数组所有元素的缓冲区。</p>
+<h2 id="数组生成"><a href="#数组生成" class="headerlink" title="数组生成"></a>数组生成</h2><hr>
+<p><strong>1. 通过array函数从python的数组生成</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np  </span><br><span class="line">a = np.array([<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])</span><br><span class="line">b = np.array([(<span class="number">1.5</span>, <span class="number">2</span>, <span class="number">3</span>), (<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>)])</span><br></pre></td></tr></table></figure>
+<p>可以为数组元素指定类型</p>
+<blockquote>
+<p>c = np.array( [ [1, 2], [3, 4] ], dtype=complex )</p>
+</blockquote>
+<p><strong>2. 使用zeros()和ones()生成全0或全一的数组，empty()生成随机的数组，其数值取决于该块内存的状态，默认类型为float64</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">np.zeros((<span class="number">3</span>, <span class="number">4</span>))</span><br><span class="line">np.ones((<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>), dtype=np.int16)</span><br><span class="line">np.empty((<span class="number">2</span>, <span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+<p><strong>3. Numpy提供了一个类似range的函数arange生成数组（array）而不是列表（list）</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">np.arange(<span class="number">10</span>, <span class="number">30</span>, <span class="number">5</span>)</span><br><span class="line">np.arange(<span class="number">0</span>, <span class="number">2</span>, <span class="number">0.3</span>)</span><br></pre></td></tr></table></figure>
+<p>当使用浮点型作为参数生成小数数组时，由于浮点型的精度问题，它生成的数组的数目可能是无法预测的。使用linspace()接受我们想要的数组数目更好一些。</p>
+<blockquote>
+<p>np.linspace(0, 2, 9)</p>
+</blockquote>
+<p><strong>4. 使用fromfunction自定义生成数组</strong><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">10</span> * x + y</span><br><span class="line">b = np.fromfunction(f, (<span class="number">5</span>, <span class="number">4</span>))</span><br></pre></td></tr></table></figure></p>
+<h2 id="打印数组"><a href="#打印数组" class="headerlink" title="打印数组"></a>打印数组</h2><hr>
+<p>打印数组时，Numpy用嵌入列表表示：</p>
+<ul>
+<li>最后一个轴从左到右打印</li>
+<li>倒数第二个轴从上到下打印</li>
+<li>剩下的也是从上到下打印，两个分片之间用空行隔开</li>
+</ul>
+<p>如果数组非常大,那么打印时会跳过中间部分而只打印边缘部分数据。想要禁止这种行为，打印出整个数组，可以使用set_printoptions改变打印选项。</p>
+<blockquote>
+<p>np.set_printoptions(threshold=’nan’)</p>
+</blockquote>
+<h2 id="基本运算"><a href="#基本运算" class="headerlink" title="基本运算"></a>基本运算</h2><hr>
+<p><strong>1. 算术运算会按元素实现</strong></p>
+<p><strong>2. 与矩阵不同，“*”表示按元素乘，要想执行j矩阵乘，可以使用dot()函数</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A*B</span><br><span class="line">A.dot(B)</span><br><span class="line">np.dot(A, B)</span><br></pre></td></tr></table></figure>
+<p><strong>3. 有些运算，比如+=、*=，会修改已经存在的数组而不是新建一个数组</strong></p>
+<p><strong>4. 很多一元操作在ndarray类中有相应的方法</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a.sum()  </span><br><span class="line">a.max()  </span><br><span class="line">a.min()</span><br></pre></td></tr></table></figure>
+<p><strong>5. 可以指定轴进行运算</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b.sum(axis=<span class="number">0</span>)   <span class="comment"># sum of each column  </span></span><br><span class="line">b.sum(axis=<span class="number">1</span>)   <span class="comment"># sum of each row</span></span><br></pre></td></tr></table></figure>
+<h2 id="访问数组"><a href="#访问数组" class="headerlink" title="访问数组"></a>访问数组</h2><hr>
+<p><strong>1. 使用索引访问</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">b[<span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">b[<span class="number">0</span>: <span class="number">5</span>, <span class="number">1</span>]</span><br><span class="line">b[:, <span class="number">1</span>]</span><br><span class="line">b[<span class="number">-1</span>]</span><br></pre></td></tr></table></figure>
+<p>当索引数小于轴的数目时，缺失的索引会被补全为”:”，也可以使用”…”代替。</p>
+<blockquote>
+<p>x[1, 2, …] &lt;=&gt; x[1, 2, :, :, :]<br>x[…, 5] &lt;=&gt; x[:, :, :, :, 5]</p>
+</blockquote>
+<p><strong>2. 遍历整个数组</strong></p>
+<p>使用第一个轴进行遍历</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> row <span class="keyword">in</span> b:</span><br><span class="line">    print(row)</span><br></pre></td></tr></table></figure>
+<p>使用flat属性遍历每一个元素</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> element <span class="keyword">in</span> b.flat:</span><br><span class="line">    print(element)</span><br></pre></td></tr></table></figure>
+<h2 id="形状（shape）操作"><a href="#形状（shape）操作" class="headerlink" title="形状（shape）操作"></a>形状（shape）操作</h2><hr>
+<p><strong>1. 改变数组的形状</strong></p>
+<ul>
+<li>有很多种方法可以改变数组的形状，以下三种方法会返回一个修改后的数组，而不是在原有的数组上修改。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a.ravel()  <span class="comment"># returns the array, flattened</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a.reshape(<span class="number">6</span>,<span class="number">2</span>)  <span class="comment"># returns the array with a modified shape</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a.T  <span class="comment"># returns the array, transposed</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>resize函数会修改原来的数组</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a.resize((<span class="number">2</span>,<span class="number">6</span>))</span><br></pre></td></tr></table></figure>
+<p><strong>2. 把不同的数组堆叠起来</strong></p>
+<p>数组可以按照不同轴堆叠</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">np.vstack((a,b))    <span class="comment"># along with first axis</span></span><br><span class="line">np.hstack((a,b))    <span class="comment"># along with second axis</span></span><br></pre></td></tr></table></figure>
+<p><strong>3. 将数组切分为若干小数组</strong></p>
+<p>hsplit</p>
+<h2 id="副本和视图"><a href="#副本和视图" class="headerlink" title="副本和视图"></a>副本和视图</h2><hr>
+<p>简单的赋值不会生成该数据的副本。</p>
+<p>不同的数组可以共享相同的数据。view()函数会生成一个看起来与原来数据相同的数组，他们会共享相同数据。</p>
+<p>数组的切片会返回一个它的视图。</p>
+<p>copy()方法会完全复制数组和数据。</p>
+<h2 id="一些常用函数和方法概述"><a href="#一些常用函数和方法概述" class="headerlink" title="一些常用函数和方法概述"></a>一些常用函数和方法概述</h2><p><strong>数组生成（Array Creation）</strong></p>
+<blockquote>
+<p>arange, array, copy, empty, empty_like, eye, fromfile, fromfunction, identity, linspace, logspace, mgrid, ogrid, ones, ones_like, r, zeros, zeros_like</p>
+</blockquote>
+<p><strong>转化（Conversions）</strong></p>
+<blockquote>
+<p>ndarray.astype, atleast_1d, atleast_2d, atleast_3d, mat</p>
+</blockquote>
+<p><strong>操作（Manipulations）</strong></p>
+<blockquote>
+<p>array_split, column_stack, concatenate, diagonal, dsplit, dstack, hsplit, hstack, ndarray.item, newaxis, ravel, repeat, reshape, resize, squeeze, swapaxes, take, transpose, vsplit, vstack</p>
+</blockquote>
+<p><strong>问题（Questions）</strong></p>
+<blockquote>
+<p>all, any, nonzero, where</p>
+</blockquote>
+<p><strong>顺序（Ordering）</strong></p>
+<blockquote>
+<p>argmax, argmin, argsort, max, min, ptp, searchsorted, sort</p>
+</blockquote>
+<p><strong>操作（Operations）</strong></p>
+<blockquote>
+<p>choose, compress, cumprod, cumsum, inner, ndarray.fill, imag, prod, put, putmask, real, sum</p>
+</blockquote>
+<p><strong>基本统计数据（Basic Statistics）</strong></p>
+<blockquote>
+<p>cov, mean, std, var</p>
+</blockquote>
+<p><strong>基本线性代数（Basic Linear Algebra）</strong></p>
+<blockquote>
+<p>cross, dot, outer, linalg.svd, vdot</p>
+</blockquote>
+<h2 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h2><p><a href="https://docs.scipy.org/doc/numpy-dev/user/quickstart.html" target="_blank" rel="noopener">Numpy doc</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/numpy/" rel="tag"># numpy</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/25/tmux-配置/" rel="next" title="tmux 安装配置">
+                <i class="fa fa-chevron-left"></i> tmux 安装配置
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/25/vim-配置/" rel="prev" title="vim安装配置">
+                vim安装配置 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="uniuvel" />
+            
+              <p class="site-author-name" itemprop="name">uniuvel</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/UuYl" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:uniuvel@gmail.com" target="_blank" title="E-Mail"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基础知识"><span class="nav-number">1.</span> <span class="nav-text">基础知识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数组生成"><span class="nav-number">2.</span> <span class="nav-text">数组生成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#打印数组"><span class="nav-number">3.</span> <span class="nav-text">打印数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本运算"><span class="nav-number">4.</span> <span class="nav-text">基本运算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#访问数组"><span class="nav-number">5.</span> <span class="nav-text">访问数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#形状（shape）操作"><span class="nav-number">6.</span> <span class="nav-text">形状（shape）操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#副本和视图"><span class="nav-number">7.</span> <span class="nav-text">副本和视图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一些常用函数和方法概述"><span class="nav-number">8.</span> <span class="nav-text">一些常用函数和方法概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考："><span class="nav-number">9.</span> <span class="nav-text">参考：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">uniuvel</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.4.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.4.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.4.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.4.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.4.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.4.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.4.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
